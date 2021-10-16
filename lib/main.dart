@@ -39,31 +39,23 @@ class MyApp extends StatelessWidget {
   Widget body() {
     return Container(
         padding: const EdgeInsets.all(20),
-        decoration: const BoxDecoration(color: Colors.lime),
-        child: col());
+        // decoration: const BoxDecoration(color: Colors.lime),
+        child: testlist());
   }
 
-  Widget col() {
-    return Column(
-      children: [row(), row(), row(), row(), Text('aaaa')],
-    );
-  }
-
-  Widget row() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-      children: const [
-        Text('111'),
-        Text('222'),
-        Text('333'),
-        Text('444'),
-        Text('555'),
-        Text('111'),
-        Text('222'),
-        Text('333'),
-        Text('444'),
-        Text('555')
-      ],
+  Widget testlist() {
+    List<String> items = List.generate(20, (index) => "Item $index");
+    // for (var i = 0; i < 10; i++) {
+    //   items.add('bbbb');
+    // }
+    return ListView.builder(
+      itemCount: items.length,
+      itemBuilder: (context, index) {
+        return ListTile(
+          title: Text(items[index]),
+          subtitle: Text('subtitle sample ...'),
+        );
+      },
     );
   }
 }
