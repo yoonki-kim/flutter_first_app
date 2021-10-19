@@ -7,11 +7,19 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
   // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(home: Home());
   }
+}
+
+class AppState {
+  bool loading;
+  String user;
+  AppState(this.loading, this.user);
 }
 
 class Home extends StatefulWidget {
@@ -22,35 +30,83 @@ class Home extends StatefulWidget {
 }
 
 class _HomeState extends State<Home> {
-  int i = 0;
+  final app = AppState(true, '');
+
+  _delay() {
+    Future.delayed(Duration(seconds: 1), () {
+      setState(() => app.loading = false);
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _delay();
+  }
+
   @override
   Widget build(BuildContext context) {
+    if (app.loading) return _loading();
+    if (app.user.isEmpty) return _signIn();
+    return _main();
+  }
+
+  Widget _loading() {
     return Scaffold(
-        appBar: AppBar(title: Text('Title'), actions: [
-          IconButton(
+      appBar: AppBar(
+        title: Text('Loading...'),
+      ),
+      body: Center(child: CircularProgressIndicator()),
+    );
+  }
+
+  Widget _signIn() {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Login...'),
+      ),
+      body: Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Text('ID: '),
+            Text('Password: '),
+            ElevatedButton(
+              child: Text('login'),
               onPressed: () {
                 setState(() {
-                  i++;
+                  app.loading = true;
+                  app.user = 'yoonki';
+                  _delay();
                 });
               },
-              icon: Icon(Icons.security))
-        ]),
-        body: Name(i: i));
+            )
+          ],
+        ),
+      ),
+    );
   }
-}
 
-class Name extends StatelessWidget {
-  const Name({Key? key, this.i = 0}) : super(key: key);
-  final int i;
-
-  @override
-  Widget build(BuildContext context) {
-    if (i % 3 == 0) {
-      return CircularProgressIndicator();
-    } else if (i % 3 == 1) {
-      return Icon(Icons.security);
-    } else {
-      return Text('clicked $i');
-    }
+  Widget _main() {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text(app.user),
+        actions: <Widget>[
+          IconButton(
+            icon: Icon(Icons.logout_rounded),
+            onPressed: () {
+              setState(() {
+                app.loading = true;
+                app.user = '';
+                _delay();
+              });
+            },
+          )
+        ],
+      ),
+      body: Center(
+        child: Text('contents'),
+      ),
+    );
   }
 }
